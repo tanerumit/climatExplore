@@ -1,2 +1,3 @@
 # climatExplore
-Climate data analysis
+
+Shiny tool for climate data exploration
