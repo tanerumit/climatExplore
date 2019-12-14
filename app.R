@@ -6,8 +6,6 @@
 
 source("global.R")
 
-sourceDir("C:/Users/taner/OneDrive - Stichting Deltares/_DELTARES/03 Tools/_SHINY_TOOLS/modules/")
-
 region_list <- c("AUS","AMZ", "SSA","CAM","WNA","CNA", "ENA","ALA","GRL","MED","NEU","WAF", 
                  "EAF", "SAF", "SAH", "SEA", "EAS", "SAS","CAS","TIB","NAS")
 

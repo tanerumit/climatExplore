@@ -1,0 +1,10 @@
+name: climatexplore
+title:
+username:
+account: cloudwater
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1599221
+bundleId: 2667443
+url: https://cloudwater.shinyapps.io/climatexplore/
+when: 1576331855.53748
