@@ -9,7 +9,6 @@ library(highcharter)
 library(fontawesome)
 library(DT)
 
-
 library(leaflet)
 library(tidyr)
 library(readr)
@@ -33,3 +32,15 @@ sourceDir <- function(path, trace = TRUE, ...) {
 }
 
 #sourceDir("./modules/")
+
+
+source("./R/read_timeseries.R")
+source("./R/XMeanStd.R")
+source("./R/timeavg.R")
+
+Sys.setlocale("LC_ALL","English")
+
+library(RNetCDF)
+library(ncdf4)
+library(maps)
+
