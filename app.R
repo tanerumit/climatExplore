@@ -14,25 +14,32 @@ names(reg) <- region_list
 
 #names(reg) <- region_list
 
-Tab1 <- tabPanel("About", icon = icon("calendar"),
+Tab1 <- tabPanel("About", icon = icon("home"),
                  jumbotron(header  = "Explore Regional Climate Data", 
-                           content = "Work-in-progress tool to explore climate data accross different regions",
+                           content = "Analyze climate data accross different regions (under-development)",
                            button  = FALSE)
 )
 
-Tab2 <- tabPanel("Analyze",
+Tab2 <- tabPanel("Analyze", icon = icon("cog"),
                  fluidRow(
-                   column(width = 5,
-                          strong("Choose region"),
-                          img(src="land-regions.png", height="125%", width="90%", align="left"),
-                          br(),
+                   column(width = 4, 
+                      wellPanel(
+                          strong("Climate region"),
+                          tags$style(".worldimg {
+                          padding-left:2px; padding-right:2px; padding-top:1px; padding-bottom:3px
+                          }"),
+                          div(class="worldimg",img(src="land-regions.png", height="90%", width="100%")),
+                          #br(),
                           selectInput("iarea", label="", choices = reg, selected = 10),
-                          sliderInput("yylist", label = "Choose analysis period", min = 1979, max = 2010, value = c(1979, 2010), sep = "", step = 5, ticks = FALSE),
-                          sliderInput("navgdays", label = "Choose averaging interval", min = 1, max = 15, value = 7, step = 1, ticks = FALSE),
-                          selectInput("rangetype", label = "Choose data range Type", choices = c("minmax", "std"), selected = "minmax"),
+                          sliderInput("yylist", label = "Analysis period", min = 1979, max = 2010, value = c(1979, 2010), sep = "", step = 5, ticks = FALSE),
+                          sliderInput("navgdays", label = "Averaging interval (days)", min = 1, max = 15, value = 7, step = 1, ticks = FALSE),
+                          selectInput("rangetype", label = "Range type", choices = c("minmax", "std"), selected = "minmax")
+                      ) # well panel close
                    ), # column close
-                   column(width = 7,
+                   column(width = 8, 
+                      wellPanel(
                           climRegionsAnalyze_mod_UI("regionPlot1")
+                      ) # wellPanel close
                    ), # column close
                  ) # fluidrow close
 )
