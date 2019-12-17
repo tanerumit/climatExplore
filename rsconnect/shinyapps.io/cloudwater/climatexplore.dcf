@@ -5,6 +5,6 @@ account: cloudwater
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1599221
-bundleId: 2667462
+bundleId: 2667975
 url: https://cloudwater.shinyapps.io/climatexplore/
-when: 1576332722.83248
+when: 1576355488.8232

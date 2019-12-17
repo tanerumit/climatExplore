@@ -6,8 +6,9 @@
 
 source("global.R")
 
-region_list <- c("AUS","AMZ", "SSA","CAM","WNA","CNA", "ENA","ALA","GRL","MED","NEU","WAF", 
-                 "EAF", "SAF", "SAH", "SEA", "EAS", "SAS","CAS","TIB","NAS")
+region_list <- c("AUS","AMZ", "SSA","CAM","WNA","CNA", "ENA","ALA","GRL",
+                 "MED","NEU","WAF", "EAF", "SAF", "SAH", "SEA", "EAS", "SAS",
+                 "CAS","TIB","NAS")
 
 reg <- 1:21
 names(reg) <- region_list
