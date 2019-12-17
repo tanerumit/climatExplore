@@ -5,10 +5,13 @@
 ################################################################################
 
 source("global.R")
+source("R/cleanRegionCoords.R")
 
 region_list <- c("AUS","AMZ", "SSA","CAM","WNA","CNA", "ENA","ALA","GRL",
                  "MED","NEU","WAF", "EAF", "SAF", "SAH", "SEA", "EAS", "SAS",
                  "CAS","TIB","NAS")
+
+regColors <- c('#1b9e77','#d95f02','#7570b3','#e7298a','#66a61e')
 
 reg <- 1:21
 names(reg) <- region_list
@@ -45,16 +48,56 @@ Tab2 <- tabPanel("Analyze", icon = icon("cog"),
                  ) # fluidrow close
 )
 
+Tab3 <- tabPanel("MAP", icon = icon("cog"),
+                 fluidRow(
+                   column(width = 4, 
+                          leafletOutput("Map")
+                   ) #column close
+                ) # fluidrow close
+) # tab close
+
+
+
+
 appUI <- navbarPage(
   title = "Climate Explore",  
   theme = shinytheme("cerulean"),
   Tab1,
-  Tab2
+  Tab2,
+  Tab3
+
 ) 
 
 ################################################################################
 ############################# SERVER-SIDE ######################################
 ################################################################################
+#south -
+#west -
+
+data <- list(
+  beam1 = data.frame(lat = c(-115,-125, -125, -115),
+                     lon = c(32, 32, 45,45)),
+  beam2 =     data.frame(lat = c(-100, -111, -111, -100),
+                         lon = c(42, 42, 50,50))
+)
+
+
+
+
+
+# x_coord <- c(105.000, 168.022, 168.022, 105.000) #longitude
+# y_coord <- c(60.000,  60.000,  72.554, 72.554) # latitude
+# 
+# 
+# xym <- cbind(x_coord, y_coord)
+# 
+# p = Polygon(xym)
+# ps = Polygons(list(p),1)
+# sps = SpatialPolygons(list(ps))
+# data = data.frame(f=1)
+# spdf = SpatialPolygonsDataFrame(sps,data)
+
+
 
 appServer <- function(input, output, session) {
 
@@ -71,10 +114,22 @@ appServer <- function(input, output, session) {
              iareaR     = vars$iareaR,
              navgdaysR  = vars$navgdaysR,
              rangetypeR = vars$rangetypeR)
+  
+  ####################### MAP COMPONENT ##############################
+
+  output$Map <- renderLeaflet({
+    leaflet() %>%
+    addProviderTiles("CartoDB.Positron") %>%
+      setView(
+        lng=0, lat=57, zoom=1) %>%
+        addPolygons(dataTemp[,"lat"],
+                  dataTemp[,"lon"],
+                  color = regColors, weight = 1,
+                  popup = paste("Region: ", dataTemp$name, "<br>"))
+    
+  })
+
 }
-
-
-
 
 ################################################################################
 ########################### SHINY-APP ##########################################

@@ -22,6 +22,7 @@ library(parcoords)
 library(RNetCDF)
 library(ncdf4)
 library(maps)
+library(sp)
 
 ### General options(max allowable size for uploads)
 options(shiny.maxRequestSize = 30*1024^2)
