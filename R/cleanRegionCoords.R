@@ -94,11 +94,12 @@ data <- list()
 for (i in 1:nrow(cleandata)) {
   data[[i]] <- data.frame(lon = as.numeric(cleandata[i,c(3,5,7,9,11,13)]),
                           lat = as.numeric(cleandata[i,c(4,6,8,10,12,14)]),
-                          name = cleandata$name[i]) %>% drop_na() %>%
-    add_row(lon = NA, lat = NA, name = cleandata$name[i])
+                          name = cleandata$id[i]) %>% drop_na() %>%
+    add_row(lon = NA, lat = NA, name = cleandata$id[i])
     
 }
-names(data) <- cleandata$name
+
 dataTemp <- do.call(rbind, data)
+
 
 

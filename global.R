@@ -1,28 +1,38 @@
 ### LIBRARIES
 library(shiny)
-library(shinyBS)
-library(shinythemes)
-library(shinydashboard)
-library(shinyLP)
-library(highcharter)
-
-library(fontawesome)
-library(DT)
-
 library(leaflet)
 library(tidyr)
 library(readr)
 library(dplyr)
-library(curl) 
+library(highcharter)
 library(ggplot2)
-library(data.table)
-library(jstable)
-library(parcoords)
-
 library(RNetCDF)
 library(ncdf4)
 library(maps)
 library(sp)
+library(shinyLP)
+library(shinythemes)
+
+# library(shinyBS)
+
+# library(shinydashboard)
+# 
+# library(highcharter)
+# 
+# library(fontawesome)
+# library(DT)
+# 
+# library(leaflet)
+# library(tidyr)
+# library(readr)
+# library(dplyr)
+# library(curl) 
+# 
+# library(data.table)
+# library(jstable)
+# library(parcoords)
+# 
+
 
 ### General options(max allowable size for uploads)
 options(shiny.maxRequestSize = 30*1024^2)
