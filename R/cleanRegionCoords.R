@@ -87,19 +87,23 @@ cleandata$lon6 <- sapply(cleandata$lon6, function(x)
          -1 * as.numeric(stri_sub(x, from =  1, to = -2))))
 
 
-
-
+polyNames <- cleandata$name
+polyIDs   <- 1:length(polyNames)
 data <- list()
-
 for (i in 1:nrow(cleandata)) {
-  data[[i]] <- data.frame(lon = as.numeric(cleandata[i,c(3,5,7,9,11,13)]),
-                          lat = as.numeric(cleandata[i,c(4,6,8,10,12,14)]),
-                          name = cleandata$id[i]) %>% drop_na() %>%
-    add_row(lon = NA, lat = NA, name = cleandata$id[i])
-    
+  data[[i]] <- data.frame(lat = as.numeric(cleandata[i,c(4,6,8,10,12,14)]),
+                          lon = as.numeric(cleandata[i,c(3,5,7,9,11,13)])) %>% drop_na() 
 }
 
-dataTemp <- do.call(rbind, data)
+# make each element of list polygon
+ps <- lapply(data, Polygon)
+# add id variable
+p1 <- lapply(seq_along(ps), function(i) Polygons(list(ps[[i]]), ID = polyNames[i]))
+# create SpatialPolygons object
+my_spatial_polys <- SpatialPolygons(p1, proj4string = CRS("+proj=longlat +datum=WGS84") ) 
+# create spatialPolygons dataframe
+my_spatial_polys_df <- SpatialPolygonsDataFrame(Sr = my_spatial_polys, 
+  data = data.frame(id = polyNames, row.names = polyNames))
 
-
+dataTemp <- my_spatial_polys_df
 

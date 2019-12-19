@@ -24,78 +24,41 @@ Tab1 <- tabPanel("About", icon = icon("home"),
                            button  = FALSE)
 )
 
+
 Tab2 <- tabPanel("Analyze", icon = icon("cog"),
-                 fluidRow(
-                   column(width = 4, 
-                      wellPanel(
-                          strong("Climate region"),
-                          tags$style(".worldimg {
-                          padding-left:2px; padding-right:2px; padding-top:1px; padding-bottom:3px
-                          }"),
-                          div(class="worldimg",img(src="land-regions.png", height="90%", width="100%")),
-                          #br(),
-                          selectInput("iarea", label="", choices = reg, selected = 10),
-                          sliderInput("yylist", label = "Analysis period", min = 1979, max = 2010, value = c(1979, 2010), sep = "", step = 5, ticks = FALSE),
-                          sliderInput("navgdays", label = "Averaging interval (days)", min = 1, max = 15, value = 7, step = 1, ticks = FALSE),
-                          selectInput("rangetype", label = "Range type", choices = c("minmax", "std"), selected = "minmax")
-                      ) # well panel close
-                   ), # column close
-                   column(width = 8, 
-                          climRegionsAnalyze_mod_UI("regionPlot1")
-                   ), # column close
-                 ) # fluidrow close
-)
-
-Tab3 <- tabPanel("MAP", icon = icon("cog"),
-                 fluidRow(
-                   column(width = 4, 
-                          leafletOutput("Map")
-                   ) #column close
-                ) # fluidrow close
-) # tab close
-
-
+  fluidRow(
+    column(5, 
+      h2("Climate Data Explorer (Beta)"), h5("Explore natural climate variability in the selected region"),
+      leafletOutput("Map"),
+      selectInput("iarea", label="", choices = reg, selected = 10),
+      fluidRow(
+        column(6, sliderInput("yylist", label = "Analysis period", min = 1979, max = 2010, value = c(1979, 2010), sep = "", step = 5, ticks = FALSE)),
+        column(6, sliderInput("navgdays", label = "Averaging interval (days)", min = 1, max = 15, value = 7, step = 1, ticks = FALSE)),
+        column(6, radioButtons("rangetype", label = "Range type", choices = c("minmax", "std"), selected = "minmax"), inline = FALSE)
+      )
+    ), 
+    column(6, offset = 1,
+      fluidRow(
+        ), #fluidrow close
+      br(), br(), br(), br(),
+      climRegionsAnalyze_mod_UI("regionPlot1")
+    ),
+  ) #fluidrow close
+)# tab close
+                 
 
 
 appUI <- navbarPage(
   title = "Climate Explore",  
   theme = shinytheme("cerulean"),
   Tab1,
-  Tab2,
-  Tab3
+  Tab2
 
 ) 
 
 ################################################################################
 ############################# SERVER-SIDE ######################################
 ################################################################################
-#south -
-#west -
-
-data <- list(
-  beam1 = data.frame(lat = c(-115,-125, -125, -115),
-                     lon = c(32, 32, 45,45)),
-  beam2 =     data.frame(lat = c(-100, -111, -111, -100),
-                         lon = c(42, 42, 50,50))
-)
-
-
-
-
-
-# x_coord <- c(105.000, 168.022, 168.022, 105.000) #longitude
-# y_coord <- c(60.000,  60.000,  72.554, 72.554) # latitude
-# 
-# 
-# xym <- cbind(x_coord, y_coord)
-# 
-# p = Polygon(xym)
-# ps = Polygons(list(p),1)
-# sps = SpatialPolygons(list(ps))
-# data = data.frame(f=1)
-# spdf = SpatialPolygonsDataFrame(sps,data)
-
-
 
 appServer <- function(input, output, session) {
 
@@ -115,19 +78,27 @@ appServer <- function(input, output, session) {
   
   ####################### MAP COMPONENT ##############################
 
+  
   output$Map <- renderLeaflet({
-    leaflet() %>%
-    addProviderTiles("CartoDB.Positron") %>%
-      setView(
-        lng=0, lat=57, zoom=1) %>%
-        addPolygons(dataTemp[,"lat"],
-                  dataTemp[,"lon"],
-                  color = regColors, weight = 1,
-                  popup = paste("Region: ", dataTemp$name, "<br>"))
     
+    leaflet() %>%
+      addProviderTiles("CartoDB.Positron") %>%
+      setView(lng=0, lat=57, zoom=1) %>%
+      addPolygons(data = dataTemp,
+                  label = ~as.character(dataTemp$id),
+                  color = "#444444",
+                  weight = 1,
+                  opacity = 1.0, 
+                  fillOpacity = 0.2,
+                  highlightOptions = highlightOptions(color = "white", weight = 1, bringToFront = TRUE),
+                  labelOptions = labelOptions(opacity=1, noHide = T, textOnly = T, textsize = "12px",
+                                              direction = 'auto'))
   })
 
 }
+
+
+
 
 ################################################################################
 ########################### SHINY-APP ##########################################

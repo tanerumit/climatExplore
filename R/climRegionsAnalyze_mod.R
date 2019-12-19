@@ -170,6 +170,7 @@ climRegionsAnalyze_mod <- function(input, output, session, iareaR = NULL,
   
   df <- df_avg %>% left_join(df_rng, by = c("tvar", "var")) %>%
     mutate(tvar = as.Date(tvar)) %>%
+    mutate(tvar = datetime_to_timestamp(tvar)) %>% #this is needed for higcharter!!!
     mutate(var = factor(var, levels = c("Precip", "Runoff", "Evap", "dS")))
  
   tit0 <- paste0("Mean annual cycle +/- ", rangetype)
@@ -181,106 +182,36 @@ climRegionsAnalyze_mod <- function(input, output, session, iareaR = NULL,
   list(df = df, tit0 = tit0, tit1 = tit1, ir_lim = ir_lim, ir_brk = ir_brk)
 
 })
-  
-  # output$regionPlot1 <- renderPlot({
-  #   
-  #   data <- plotData()
-  #   
-  #   ggplot(data$df, aes(x = tvar)) +
-  #     # Geoms
-  #     geom_line(aes(y = value, color = var), size = 1) +
-  #     geom_ribbon(aes(ymin = min, ymax = max, fill = var), alpha = 0.2) +
-  #     geom_hline(yintercept = 0) +
-  #     # Scales 
-  #     scale_y_continuous(limits = data$ir_lim, breaks = data$ir_brk) +
-  #     scale_x_date(date_breaks = "1 month", date_labels = "%b") +
-  #     scale_color_manual(values = var_colors) +
-  #     scale_fill_manual(values = var_colors) +   
-  #     # Themes  
-  #     theme_minimal() +
-  #     theme(panel.grid.minor = element_blank(),
-  #           legend.position = c(.95, .95),
-  #           legend.justification = c("right", "top"),
-  #           legend.box.just = "right",
-  #           legend.margin = margin(6, 6, 6, 6)
-  #     ) +
-  #     # Labels/titles
-  #     labs(x = "", y = "mm/day", color = "variable", fill = "variable") +
-  #     ggtitle(data$tit0, subtitle = data$tit1) 
-  #   
-  # })
-  
-  
-  
+
   output$regionPlot1 <- renderHighchart({
 
     data <- plotData()
     
     hchart(data$df, hcaes(x = tvar, y = value, group = var), type = "line") %>% 
       hc_add_series(data$df, hcaes(x = tvar, low = min, high = max, group = var), 
-                    type = "arearange", fillOpacity = 0.2, showInLegend = F) %>%     
+                    type = "arearange", fillOpacity = 0.2, showInLegend = T) %>%     
       hc_plotOptions(
-          arearange = list(marker = list(enabled = FALSE)),
+          arearange = list(marker = list(enabled = FALSE), line = list(enabled = FALSE)),
           series = list(marker = list(enabled = FALSE))) %>%
       hc_add_theme(hc_theme_google()) %>%
       hc_exporting(enabled = T) %>%
       hc_legend(align = "right", verticalAlign = "top", 
                 layout = "vertical", x = 0, y = 50)  %>%
-      hc_xAxis(type = "datetime", dateTimeLabelFormats = list(Month = '%b')) 
-
+      hc_xAxis(title = list(text = "Month"),
+               type = "datetime", dateTimeLabelFormats = list(month = '%b'),
+               tickInterval = 24 * 3600 * 1000*30,
+               tickmarkPlacement = "between") %>%
+      hc_tooltip(valueDecimals = 2) %>%
+      hc_yAxis(title = list(text = "mm/day")) %>%
+      hc_title(text = data$tit0, margin = 20, align = "left",
+               style = list(color = "black", useHTML = TRUE)) %>% 
+      hc_subtitle(text = data$tit1, align = "left")
     
    
-    # hchart(data$df, "line", hcaes(x = tvar, y = value, group = var)) %>%
-    #   hc_chart(borderWidth = 0.1) %>% 
-    #   hc_add_series(data$df, type = "arearange", lineWidth = 0.1,
-    #                 hcaes(x = tvar, low = min, high = max, group = var),
-    #                 fillOpacity = 0.5, showInLegend = T) %>%
-    #   #hc_colors() %>%
-    #   hc_add_theme(hc_theme_smpl()) %>%
-    #   
-    #   hc_exporting(enabled = T) %>%
-    #   
-    #   
-      
-                 
-      #               fillOpacity = 0.2, showInLegend = T) %>%
-      # hc_add_series(data$df, type = "line",
-      #               hcaes(color = "scenario", group = "scenario")) %>%
-      # 
-      # hc_tooltip(crosshairs = TRUE,
-      #            formatter = JS("function(){ return (' Scenario: ' + this.point.scenario +' <br> Year: ' + this.x + ' <br> Value: ' + this.y)}"),
-      #            borderWidth = 2, 
-      #            backgroundColor = "rgba(255,255,255,0.8)",
-      #            borderColor = "black") %>%
-      # hc_exporting(enabled = T) %>%
-      # hc_xAxis(title = list(text = "Year"),
-      #          plotLines = list(
-      #            list(color = "#e0e0e0", width = 2, value = 1900),
-      #            list(color = "#e0e0e0", width = 2, value = 1950),
-      #            list(color = "#e0e0e0", width = 2, value = 2000),
-      #            list(color = "#e0e0e0", width = 2, value = 2050),
-      #            list(color = "#e0e0e0", width = 2, value = 2100))) %>%
-      # hc_yAxis(tickPositions = c(-6, -4, -2, 0, 2, 4, 6, 8, 10, 12)) %>%
-      # hc_plotOptions(marker = list(lineWidth = 1),
-      #                series = list(area = list(states = list(hover = list(enabled = FALSE))))) %>%
-      # hc_size(1000, 600)
     
+}) 
     
-    # hchart(data$df, "line", hcaes(x = tvar, y = value, group = var)) %>%
-    #   hc_exporting(enabled = TRUE) %>% 
-    #   hc_tooltip(crosshairs = TRUE, backgroundColor = "#FCFFC5",
-    #              shared = TRUE, borderWidth = 2) %>%
-    #   hc_title(text="Time series plot of Inflation Rates for Economic Unions",align="center") %>%
-    #   hc_subtitle(text="Data Source: IMF",align="center") %>%
-    #   hc_add_theme(hc_theme_elementary()) #%>%
-    #   #hc_yAxis(title = list(text = "mm/day"),
-    #   #         showFirstLabel = FALSE,
-    #   #         showLastLabel = FALSE,
-    #   #         plotLines = list(color = "black", width = 2, value = 0))
-    
-  }) 
-    
-    
+   
 
 }
 
