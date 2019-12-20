@@ -28,18 +28,22 @@ Tab2 <- tabPanel("Analyze", icon = icon("cog"),
   fluidRow(
     column(5, 
       h2("Climate Data Explorer (Beta)"), h5("Explore natural climate variability in the selected region"),
-      leafletOutput("Map"),
       selectInput("iarea", label="", choices = reg, selected = 10),
-      fluidRow(
-        column(6, sliderInput("yylist", label = "Analysis period", min = 1979, max = 2010, value = c(1979, 2010), sep = "", step = 5, ticks = FALSE)),
-        column(6, sliderInput("navgdays", label = "Averaging interval (days)", min = 1, max = 15, value = 7, step = 1, ticks = FALSE)),
-        column(6, radioButtons("rangetype", label = "Range type", choices = c("minmax", "std"), selected = "minmax"), inline = FALSE)
+      leafletOutput("Map"),
+      br(),
+      column(6, 
+        sliderInput("yylist", label = "Analysis period", min = 1979, max = 2010, value = c(1979, 2010), sep = "", step = 1, ticks = FALSE),
+        sliderInput("navgdays", label = "Averaging interval (days)", min = 1, max = 15, value = 7, step = 1, ticks = FALSE)
+      ),
+      column(6,
+           radioButtons("rangetype", label = "Range type", choices = c("minmax", "std"), selected = "minmax", inline = TRUE)
       )
+     
     ), 
     column(6, offset = 1,
       fluidRow(
         ), #fluidrow close
-      br(), br(), br(), br(),
+      br(), br(), br(), br(), br(), br(), br(), br(),
       climRegionsAnalyze_mod_UI("regionPlot1")
     ),
   ) #fluidrow close
@@ -54,6 +58,7 @@ appUI <- navbarPage(
   selected = "Analyze"
 
 ) 
+
 
 ################################################################################
 ############################# SERVER-SIDE ######################################
@@ -75,29 +80,25 @@ appServer <- function(input, output, session) {
              navgdaysR  = vars$navgdaysR,
              rangetypeR = vars$rangetypeR)
   
+  
   ####################### MAP COMPONENT ##############################
 
-  
   output$Map <- renderLeaflet({
     
     leaflet() %>%
       addProviderTiles("CartoDB.PositronNoLabels") %>%
       setView(lng=0, lat=57, zoom=1) %>%
       addPolygons(data = dataTemp,
-                  label = ~as.character(dataTemp$id),
-                  color = "#444444",
-                  weight = 1,
-                  opacity = 1.0, 
-                  fillOpacity = 0.2,
-                  highlightOptions = highlightOptions(color = "white", weight = 1, bringToFront = TRUE),
-                  labelOptions = labelOptions(opacity=1, noHide = T, textOnly = T, textsize = "12px",
-                                              direction = 'auto'))
+         label = ~as.character(dataTemp$id),
+         color = "#444444",
+         weight = 1,
+         opacity = 1.0, 
+         fillOpacity = 0.2,
+         highlightOptions = highlightOptions(color = "white", weight = 3, bringToFront = TRUE),
+         labelOptions = labelOptions(opacity=1, noHide = T, textOnly = T, textsize = "12px", direction = 'auto'))
   })
 
 }
-
-
-
 
 ################################################################################
 ########################### SHINY-APP ##########################################

@@ -219,7 +219,7 @@ climRegionsAnalyze_mod <- function(input, output, session, iareaR = NULL,
       hc_subtitle(text = data$tit1, align = "left") %>%  
       
       # Set tooltips
-      hc_tooltip(valueDecimals = 2, crosshairs = FALSE, borderWidth = 1, shared = TRUE, table = TRUE)
+      hc_tooltip(valueDecimals = 2, crosshairs = FALSE, borderWidth = 1, shared = TRUE)
       
 #                 formatter = JS("function(){ return (' Variable: ' + this.point.var +' 
  #                                                    <br> Value: ' + this.y +')}"))
