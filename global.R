@@ -43,7 +43,7 @@ source("./R/XMeanStd.R")
 source("./R/timeavg.R")
 source("./R/climRegionsAnalyze_mod.R")
 
-
+dataTemp <- readRDS("./data/climRegionsCoords.Rds")
 
 
 

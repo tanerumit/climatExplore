@@ -4,9 +4,8 @@ climRegionsAnalyze_mod_UI <- function(id) {
   
   ns = NS(id)
   
-  highchartOutput(ns("regionPlot1"))
-  #plotOutput(ns("regionPlot1"))
-  
+  highchartOutput(ns("regionPlot1"), height="120%", width = "80%")
+
 }
 
 ### Server-side function
@@ -171,7 +170,8 @@ climRegionsAnalyze_mod <- function(input, output, session, iareaR = NULL,
   df <- df_avg %>% left_join(df_rng, by = c("tvar", "var")) %>%
     mutate(tvar = as.Date(tvar)) %>%
     mutate(tvar = datetime_to_timestamp(tvar)) %>% #this is needed for higcharter!!!
-    mutate(var = factor(var, levels = c("Precip", "Runoff", "Evap", "dS")))
+    mutate(var = factor(var, levels = c("Precip", "Runoff", "Evap", "dS"))) %>%
+    mutate(value = round(value, 2))
  
   tit0 <- paste0("Mean annual cycle +/- ", rangetype)
   
@@ -187,31 +187,47 @@ climRegionsAnalyze_mod <- function(input, output, session, iareaR = NULL,
 
     data <- plotData()
     
-    hchart(data$df, hcaes(x = tvar, y = value, group = var), type = "line") %>% 
-      hc_add_series(data$df, hcaes(x = tvar, low = min, high = max, group = var), 
-                    type = "arearange", fillOpacity = 0.2, showInLegend = T) %>%     
+      hchart(data$df, hcaes(x = tvar, y = value, group = var), type = "line") %>% 
+      
+      #Set additional geoms
+      hc_add_series(data$df, 
+                    hcaes(x = tvar, low = min, high = max, group = var), 
+                    type = "arearange", fillOpacity = 0.2, showInLegend = T) %>% 
+      
+      #Set plotting options  
       hc_plotOptions(
-          arearange = list(marker = list(enabled = FALSE), line = list(enabled = FALSE)),
+          arearange = list(marker = list(enabled = FALSE), 
+                           line = list(enabled = FALSE)),
           series = list(marker = list(enabled = FALSE))) %>%
       hc_add_theme(hc_theme_google()) %>%
       hc_exporting(enabled = T) %>%
+      
+      #Set legend  
       hc_legend(align = "right", verticalAlign = "top", 
-                layout = "vertical", x = 0, y = 50)  %>%
+                  layout = "vertical", x = 0, y = 50)  %>%  
+      
+      #Set x/y axes
       hc_xAxis(title = list(text = "Month"),
-               type = "datetime", dateTimeLabelFormats = list(month = '%b'),
-               tickInterval = 24 * 3600 * 1000*30,
-               tickmarkPlacement = "between") %>%
-      hc_tooltip(valueDecimals = 2) %>%
-      hc_yAxis(title = list(text = "mm/day")) %>%
+                 type = "datetime", dateTimeLabelFormats = list(month = '%b'),
+                 tickInterval = 24 * 3600 * 1000*30,
+                 tickmarkPlacement = "between") %>%
+      hc_yAxis(title = list(text = "mm/day")) %>% 
+      
+      # Set labels/titles
       hc_title(text = data$tit0, margin = 20, align = "left",
-               style = list(color = "black", useHTML = TRUE)) %>% 
-      hc_subtitle(text = data$tit1, align = "left")
+                 style = list(color = "black", useHTML = TRUE)) %>% 
+      hc_subtitle(text = data$tit1, align = "left") %>%  
+      
+      # Set tooltips
+      hc_tooltip(valueDecimals = 2, crosshairs = FALSE, borderWidth = 1, shared = TRUE, table = TRUE)
+      
+#                 formatter = JS("function(){ return (' Variable: ' + this.point.var +' 
+ #                                                    <br> Value: ' + this.y +')}"))
     
    
     
 }) 
-    
-   
+
 
 }
 

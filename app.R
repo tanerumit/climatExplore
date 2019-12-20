@@ -4,8 +4,8 @@
 ############################# UI-SIDE ##########################################
 ################################################################################
 
+
 source("global.R")
-source("R/cleanRegionCoords.R")
 
 region_list <- c("AUS","AMZ", "SSA","CAM","WNA","CNA", "ENA","ALA","GRL",
                  "MED","NEU","WAF", "EAF", "SAF", "SAH", "SEA", "EAS", "SAS",
@@ -23,7 +23,6 @@ Tab1 <- tabPanel("About", icon = icon("home"),
                            content = "Analyze climate data accross different regions (under-development)",
                            button  = FALSE)
 )
-
 
 Tab2 <- tabPanel("Analyze", icon = icon("cog"),
   fluidRow(
@@ -45,14 +44,14 @@ Tab2 <- tabPanel("Analyze", icon = icon("cog"),
     ),
   ) #fluidrow close
 )# tab close
-                 
-
-
+ 
+ 
 appUI <- navbarPage(
   title = "Climate Explore",  
   theme = shinytheme("cerulean"),
   Tab1,
-  Tab2
+  Tab2,
+  selected = "Analyze"
 
 ) 
 
@@ -82,7 +81,7 @@ appServer <- function(input, output, session) {
   output$Map <- renderLeaflet({
     
     leaflet() %>%
-      addProviderTiles("CartoDB.Positron") %>%
+      addProviderTiles("CartoDB.PositronNoLabels") %>%
       setView(lng=0, lat=57, zoom=1) %>%
       addPolygons(data = dataTemp,
                   label = ~as.character(dataTemp$id),

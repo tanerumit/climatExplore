@@ -106,4 +106,4 @@ my_spatial_polys_df <- SpatialPolygonsDataFrame(Sr = my_spatial_polys,
   data = data.frame(id = polyNames, row.names = polyNames))
 
 dataTemp <- my_spatial_polys_df
-
+saveRDS(object = dataTemp, "./data/climRegionsCoords.Rds")
